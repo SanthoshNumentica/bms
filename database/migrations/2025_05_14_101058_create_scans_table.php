@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('scans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('scan_type_fk_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('scan_type_fk_id');
             $table->string('name');
             $table->timestamps();
         });

@@ -65,40 +65,12 @@ class AdminPanelProvider extends PanelProvider
                         ->group('Settings')
                         ->sort(1)
                         ->visible(fn(): bool => auth()->user()->can('Permission List')),
-
-
-                        // UserResource::getNavigationItems()
              ])
-            //  ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
-            //     return $builder->groups([
-            //         NavigationGroup::make('Master')
-            //             ->items([
-            //                 ...UserResource::getNavigationItems(
-
-            //                         ->visible(fn(): bool => auth()->user()->can('User List')),
-
-            //                 )
-
-            //                 ...RoleResource::getNavigationItems(),
-            //                 ...PermissionResource::getNavigationItems(),
-            //             ]),
-            //     ]);
-            // })
-
-            // ->userMenuItems([
-
-            //                 MenuItem::make()
-            //                 ->label('User')
-            //                 ->icon('heroicon-o-cog-6-tooth')
-            //                 ->visible(fn(): bool => auth()->user()->can('User List')),
-            //                 UserResource::getNavigationItems(),
-
-            // ])
-
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\AccountWidget::class,
+                \App\Filament\Widgets\StatsOverview::class,
+                // \App\Filament\Resources\Resource\Widgets\StatsOverviewDoctor::class,
             ])
             ->middleware([
                 EncryptCookies::class,

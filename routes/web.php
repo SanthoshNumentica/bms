@@ -16,3 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+use App\Http\Controllers\WhatsAppController;
+
+Route::post('/send-whatsapp-documents/{recordId}', [WhatsAppController::class, 'sendDocumentToWhatsApp']);
+
