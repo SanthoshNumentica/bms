@@ -15,6 +15,14 @@ return [
     */
     'path'=>'dashboard',
     'title'=>'Pranav Diagnostics',
+    'colors' => [
+    'primary' => 'blue',
+    'secondary' => 'gray',
+    'danger' => 'red',
+    'success' => 'green',
+    'warning' => 'yellow',
+],
+
     'broadcasting' => [
 
         // 'echo' => [

@@ -1,0 +1,7 @@
+body {
+    background-image: url('/storage/images/scan_bg.jpg'); /* Put your background image in public/images/login-bg.jpg */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+}
