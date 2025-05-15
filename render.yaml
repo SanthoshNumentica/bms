@@ -3,6 +3,7 @@ services:
     name: pranav-diagnostics
     env: php
     plan: free
+    phpVersion: 8.2
     buildCommand: |
       composer install --optimize-autoloader --no-dev
       php artisan config:cache
