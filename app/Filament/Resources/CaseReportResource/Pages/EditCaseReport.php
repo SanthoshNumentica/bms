@@ -44,13 +44,31 @@ class EditCaseReport extends EditRecord
 {
     parent::saved();
 
-    $documents = $this->record->documents ?? [];
+    $record = $this->record;
+    $documents = $record->documents ?? [];
 
     if (is_array($documents) && count($documents) > 0) {
-        $recordId = $this->record->id;
-        $response = Http::post(url("/send-whatsapp-documents/{$recordId}"));
-        Log::info('WhatsApp API Response:', ['response' => $response->json()]);
+        $patient = $record->patient;
+
+        if ($patient) {
+            $data = [
+                'patient_name' => $patient->name ?? '',
+                'patient_phone' => $patient->phone ?? '',
+                'report_id' => $record->id,
+                'report_date' => $record->created_at,
+                'documents' => $documents,
+            ];
+
+            $response = Http::post(url("/whatsAppSend"), $data);
+
+            Log::info('WhatsApp API Request Data:', $data);
+            Log::info('WhatsApp API Response:', ['response' => $response->json()]);
+        } else {
+            Log::warning('Patient not found for report ID: ' . $record->id);
+        }
     }
 }
+
+
 
 }

@@ -2,65 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CaseReport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class WhatsAppController extends Controller
 {
-    public function sendDocumentToWhatsApp($recordId)
+    public function whatsAppSend(Request $request)
     {
-        $caseReport = CaseReport::find($recordId);
-
-        // New logic commented for now
-        /*
-        if ($caseReport && $caseReport->documents && $caseReport->patient->whatsapp_number) {
-            $whatsappNumber = $caseReport->patient->whatsapp_number;
-
-            $documents = is_array($caseReport->documents)
-                ? $caseReport->documents
-                : json_decode($caseReport->documents, true);
-
-            $documentUrl = null;
-            if (!empty($documents)) {
-                $documentPath = $documents[0];
-                $documentUrl = asset("storage/{$documentPath}");
-            }
-
-            if (!$documentUrl) {
-                return response()->json(['message' => 'Document URL not found.'], 400);
-            }
-        */
-
-        // Old logic restored
-        if ($caseReport && $caseReport->documents && $caseReport->patient->whatsapp_number) {
-            $whatsappNumber = $caseReport->patient->whatsapp_number;
-            $documentUrl = $caseReport->documents->first()->url;  // Old assumption of collection with `url`
-
-            $curl = curl_init();
-            curl_setopt_array($curl, [
-                CURLOPT_URL => 'https://acs.agoo.in/api/create-message',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_POST => true,
-                CURLOPT_POSTFIELDS => [
-                    'appkey' => '5d34d98c-c81b-4e1e-a8f5-74c24e0d17a8',
-                    'authkey' => 'jSvVJO1Lp3u07oDKDESCrDxyBoV7LSZ0UrMCT5t642H15j9YNX',
-                    'to' => '919384579716',
-                    'message' => 'Here is your document.',
-                    'file' => 'https://www.learningcontainer.com/wp-content/uploads/2019/09/sample-pdf-file.pdf',
-                    'sandbox' => 'false',
-                ],
-            ]);
-
-            $response = curl_exec($curl);
-            curl_close($curl);
-
-            return response()->json([
-                'message' => 'Document sent via WhatsApp!',
-                'response' => $response,
-            ]);
+        $patientName = $request->input('patient_name');
+        $patientPhone = $request->input('patient_phone');
+        $reportId = $request->input('report_id');
+        $reportDate = $request->input('report_date');
+        $documents = $request->input('documents', []);
+        $mobile_no = $patientPhone;
+        if (env('APP_ENV') !== 'production') {
+            $mobile_no = env('TEST_WHATSAPP', $mobile_no); 
         }
-        return response()->json(['message' => 'No document found or invalid number.'], 400);
+        sleep(1); // optional delay
+        $message = "Hello {$patientName}, your report (ID: {$reportId}) dated {$reportDate} is available.";
+        if (!empty($documents) && is_array($documents)) {
+            foreach ($documents as $doc) {
+                $message .= "\n• Document: " . (is_string($doc) ? $doc : json_encode($doc));
+            }
+        }
+        $formData = [
+            "appkey" => env('APPKEY'),
+            "authkey" => env('AUTHKEY'),
+            "to" => $mobile_no,
+            "message" => $message,
+        ];
+        $url = env('WHATSAPP_URL');
+        $req_url = filter_var($url, FILTER_SANITIZE_URL);
+        $response = Http::withHeaders([
+            'Accept' => '*/*',
+            'appkey' => env('APPKEY'),
+            'Content-Type' => 'application/json',
+        ])->post($req_url, $formData);
+        $resBody = $response->body();
+        $success = str_contains(strtolower(trim($resBody)), 'true');
+        Log::info('WhatsApp message send attempt', [
+            'mobile_no' => $mobile_no,
+            'message' => $message,
+            'response' => $resBody
+        ]);
+        return response()->json([
+            'status' => $success,
+            'response' => $resBody
+        ]);
     }
-
 }
-

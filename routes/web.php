@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WhatsAppController;
+use Illuminate\Support\Facades\Redirect;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,10 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-use App\Http\Controllers\WhatsAppController;
+Route::get('/', fn () => Redirect::to('/admin'));
 
-Route::post('/send-whatsapp-documents/{recordId}', [WhatsAppController::class, 'sendDocumentToWhatsApp']);
+
+Route::post('/whatsAppSend', [WhatsAppController::class, 'whatsAppSend']);
 
