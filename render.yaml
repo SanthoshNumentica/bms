@@ -1,15 +1,55 @@
 services:
   - type: web
-    name: your-app-name
+    name: pranav-diagnostics
     env: php
-    buildCommand: |
-      apt-get update && apt-get install -y curl unzip git libzip-dev
-      curl -sS https://getcomposer.org/installer | php
-      php composer.phar install --no-dev --optimize-autoloader
-      php artisan migrate --force
-      php artisan db:seed --force
-    startCommand: php artisan serve --host 0.0.0.0 --port 10000
     plan: free
-    runtime: php
-    region: oregon
-    phpVersion: 8.2
+    buildCommand: |
+      composer install --optimize-autoloader --no-dev
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+    startCommand: php artisan serve --host 0.0.0.0 --port 10000
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        value: base64:8s/++hVpeFgMKgG2K3xwhGTQNHCNrLmzcI1+a5L5ixQ=
+      - key: APP_NAME
+        value: "Pranav Diagnostics"
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        value: https://<your-render-url>.onrender.com
+
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: s4152.bom1.stableserver.net
+      - key: DB_PORT
+        value: 3306
+      - key: DB_DATABASE
+        value: ssamtorg_pranavdiagnostics
+      - key: DB_USERNAME
+        value: ssamtorg_admin
+      - key: DB_PASSWORD
+        value: vinoth.27
+
+      - key: TEST_WHATSAPP
+        value: 919384579716
+      - key: APPKEY
+        value: 5d34d98c-c81b-4e1e-a8f5-74c24e0d17a8
+      - key: AUTHKEY
+        value: jSvVJO1Lp3u07oDKDESCrDxyBoV7LSZ0UrMCT5t642H15j9YNX
+      - key: WHATSAPP_URL
+        value: https://acs.agoo.in/api/create-message
+
+      - key: MAIL_MAILER
+        value: smtp
+      - key: MAIL_HOST
+        value: mailpit
+      - key: MAIL_PORT
+        value: 1025
+      - key: MAIL_FROM_ADDRESS
+        value: hello@example.com
+      - key: MAIL_FROM_NAME
+        value: "Pranav Diagnostics"
