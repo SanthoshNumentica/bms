@@ -42,4 +42,5 @@ class CaseReport extends Model
             $model->case_id = 'CAS' . str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
         });
     }
+    
 }

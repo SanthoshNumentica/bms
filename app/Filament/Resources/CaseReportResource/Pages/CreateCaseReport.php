@@ -22,29 +22,31 @@ class CreateCaseReport extends CreateRecord
     {
         return 'Case Report  has been created successfully';
     }
-    protected function saved(): void
+    protected function mutateFormDataBeforeCreate(array $data): array
     {
-        parent::saved();
-        $record = $this->record;
-        $documents = $record->documents ?? [];
-        if (is_array($documents) && count($documents) > 0) {
-            $patient = $record->patient;
-            if ($patient) {
-                $data = [
-                    'patient_name' => $patient->name ?? '',
-                    'patient_phone' => $patient->phone ?? '',
-                    'report_id' => $record->id,
-                    'report_date' => $record->created_at,
-                    'documents' => $documents,
-                ];
-                if ($documents && count($documents) > 0) {
-                    $response = Http::post(url("/whatsAppSend"), $data);
-                    Log::info('WhatsApp API Request Data:', $data);
-                    Log::info('WhatsApp API Response:', ['response' => $response->json()]);
-                } else {
-                    Log::warning('Patient not found for report ID: ' . $record->id);
+        // Check if any of the items has documents uploaded
+        $hasDocuments = false;
+
+        if (isset($data['items']) && is_array($data['items'])) {
+            foreach ($data['items'] as $item) {
+                if (!empty($item['documents'] ?? [])) {
+                    $hasDocuments = true;
+                    break;
                 }
             }
         }
+
+        $data['status'] = $hasDocuments ? 'closed' : 'pending';
+
+        return $data;
+    }
+     protected function updateStatusBasedOnDocuments(): void
+    {
+        $record = $this->record->refresh(); // Reload fresh from DB
+
+        $hasDocuments = $record->items()->whereHas('documents')->exists();
+
+        $record->status = $hasDocuments ? 'closed' : 'pending';
+        $record->save();
     }
 }

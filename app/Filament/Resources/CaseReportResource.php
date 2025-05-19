@@ -108,8 +108,8 @@ class CaseReportResource extends Resource
                 Tables\Columns\TextColumn::make('doctor.name')->label('Doctor'),
                 Tables\Columns\TextColumn::make('description')->limit(30),
                 Tables\Columns\TextColumn::make('status')->badge()->colors([
-                    'success' => 'closed',
-                    'danger' => 'pending',
+                    'Completed' => 'success',
+                    'Pending' => 'danger',
                 ]),
                 Tables\Columns\TextColumn::make('created_at')->label('Created At')->dateTime(),
             ])
@@ -130,35 +130,30 @@ class CaseReportResource extends Resource
                 Tables\Actions\EditAction::make()->icon('heroicon-o-pencil'),
                 Tables\Actions\DeleteAction::make()->icon('heroicon-o-trash'),
                 Tables\Actions\Action::make('sendWhatsapp')
-    ->label('WhatsApp')
-    ->icon('heroicon-o-chat-bubble-left-right')
-    ->color('success')
-    ->requiresConfirmation()
-    ->modalHeading('Send WhatsApp')
-    ->modalDescription('Are you sure you want to send the WhatsApp report message to the patient?')
-    ->modalSubmitActionLabel('Send')
-    ->modalCancelActionLabel('Cancel')
-    ->action(function ($record, $livewire) {
-        // Set loading property on Livewire component
-        $livewire->dispatchBrowserEvent('whatsapp-loading-start');
-
-        try {
-            Http::post(route('send.whatsapp', $record->id));
-
-            Notifications::make()
-                ->title('WhatsApp message sent successfully.')
-                ->success()
-                ->send();
-        } catch (\Throwable $e) {
-            Notifications::make()
-                ->title('Failed to send WhatsApp message.')
-                ->danger()
-                ->send();
-        }
-
-        // Remove loading property
-        $livewire->dispatchBrowserEvent('whatsapp-loading-stop');
-    }),
+                    ->label('WhatsApp')
+                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Send WhatsApp')
+                    ->modalDescription('Are you sure you want to send the WhatsApp report message to the patient?')
+                    ->modalSubmitActionLabel('Send')
+                    ->modalCancelActionLabel('Cancel')
+                    ->action(function ($record, $livewire) {
+                        $livewire->dispatchBrowserEvent('whatsapp-loading-start');
+                        try {
+                            Http::post(route('send.whatsapp', $record->id));
+                            Notifications::make()
+                                ->title('WhatsApp message sent successfully.')
+                                ->success()
+                                ->send();
+                        } catch (\Throwable $e) {
+                            Notifications::make()
+                                ->title('Failed to send WhatsApp message.')
+                                ->danger()
+                                ->send();
+                        }
+                        $livewire->dispatchBrowserEvent('whatsapp-loading-stop');
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
