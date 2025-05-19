@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('scans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('scan_type_fk_id');
+            $table->foreign('scan_type_fk_id')->references('id')->on('scan_types')->onDelete('cascade');
             $table->string('name');
             $table->timestamps();
         });

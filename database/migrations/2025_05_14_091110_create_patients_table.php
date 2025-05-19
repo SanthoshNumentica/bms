@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string("email_id")->unique();
             $table->date("dob")->nullable();
             $table->string("mobile_no");
-            $table->string("whatsapp_no");
+            $table->string("whatsapp_no")->nullable();
             $table->unsignedBigInteger("blood_group_fk_id");
             $table->unsignedBigInteger("gender_fk_id");
             $table->string("address");

@@ -26,6 +26,11 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test',
             'email' => 'test@gmail.com',
         ]);
+        $this->call([
+            BloodGroupSeeder::class,
+            GenderSeeder::class,
+            TitleSeeder::class
+        ]);
 
         $role = Role::create(['name' => 'Admin']);
         $user1->assignRole($role);

@@ -20,11 +20,19 @@ class CaseReport extends Model
     {
         return $this->belongsTo(Patient::class, 'patient_fk_id');
     }
+    public function items()
+{
+    return $this->hasMany(CaseReportItem::class);
+}
 
     public function doctor()
     {
         return $this->belongsTo(Doctor::class, 'doc_ref_fk_id');
     }
+    public function caseReportItems()
+{
+    return $this->hasMany(CaseReportItem::class, 'case_report_id');
+}
 
     protected static function booted()
     {

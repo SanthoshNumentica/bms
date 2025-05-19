@@ -20,7 +20,7 @@ class CreateCaseReport extends CreateRecord
 
     protected function getCreatedNotificationTitle(): ?string
     {
-        return 'Patient has been created successfully';
+        return 'Case Report  has been created successfully';
     }
     protected function saved(): void
     {

@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->unsignedBigInteger('doc_ref_fk_id');
             $table->string('description');
             $table->string('remarks');
-            $table->json('documents')->nullable();
             $table->enum('status', ['closed', 'pending'])->default('pending');
             $table->timestamps();
         });

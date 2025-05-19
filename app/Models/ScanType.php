@@ -9,8 +9,10 @@ class ScanType extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    protected $fillable = ['name'];
+
     public function scans()
     {
-        return $this->hasMany(Scan::class);
+        return $this->hasMany(Scan::class, 'scan_type_fk_id');
     }
 }

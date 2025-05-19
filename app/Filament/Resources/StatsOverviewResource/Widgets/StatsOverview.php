@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\StatsOverviewResource\Widgets;
+namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
 use App\Models\User;
