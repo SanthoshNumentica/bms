@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('case_reports', function (Blueprint $table) {
             $table->id();
             $table->string('case_id');
-            $table->unsignedBigInteger('patient_fk_id');
-            $table->unsignedBigInteger('doc_ref_fk_id');
+            $table->foreignId('patient_fk_id')->constrained('patients')->onDelete('cascade');
+            $table->foreignId('doc_ref_fk_id')->constrained('doctors')->onDelete('cascade');
             $table->string('description');
             $table->string('remarks');
             $table->enum('status', ['closed', 'pending'])->default('pending');

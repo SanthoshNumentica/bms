@@ -20,6 +20,7 @@ use Filament\Forms\Components\Select;
 use Filament\Livewire\Notifications;
 use Illuminate\Support\Facades\Http;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 
 class CaseReportResource extends Resource
 {
@@ -27,76 +28,96 @@ class CaseReportResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Section::make()
-                    ->schema([
-                        Grid::make(4)
-                            ->schema([
-                                Forms\Components\Select::make('patient_fk_id')
-                                    ->label('Patient')
-                                    ->placeholder('Select a Patient')
-                                    ->relationship('patient', 'name')
-                                    ->getOptionLabelFromRecordUsing(fn($record) => "{$record->name}-{$record->patient_id} ({$record->mobile_no})")
-                                    ->required()
-                                    ->searchable()
-                                    ->preload(),
+   public static function form(Form $form): Form
+{
+    return $form
+        ->schema([
+            Section::make()
+                ->schema([
+                    Grid::make(4)->schema([
+                        Forms\Components\Select::make('patient_fk_id')
+                            ->label('Patient')
+                            ->relationship('patient', 'name')
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name}-{$record->patient_id} ({$record->mobile_no})")
+                            ->required()
+                            ->searchable()
+                            ->preload(),
 
-                                Forms\Components\Select::make('doc_ref_fk_id')
-                                    ->label('Referred Doctor')
-                                    ->placeholder('Select a Doctor')
-                                    ->relationship('doctor', 'name')
-                                    ->getOptionLabelFromRecordUsing(fn($record) => "{$record->name}-{$record->doctor_id} ({$record->mobile_no})")
-                                    ->required()
-                                    ->searchable()
-                                    ->preload(),
+                        Forms\Components\Select::make('doc_ref_fk_id')
+                            ->label('Referred Doctor')
+                            ->relationship('doctor', 'name')
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name}-{$record->doctor_id} ({$record->mobile_no})")
+                            ->required()
+                            ->searchable()
+                            ->preload(),
 
-                                Textarea::make('description')
-                                    ->label('Description')
-                                    ->maxLength(255),
-
-                                Textarea::make('remarks')
-                                    ->label('Remarks')
-                                    ->maxLength(255),
-
-                                TextInput::make('case_id')
-                                    ->label('Case ID')
-                                    ->visibleOn('view')
-                                    ->disabled(),
-                            ]),
-
-                        Repeater::make('items')
-                            ->relationship()
-                            ->label('Case Report Items')
-                            ->schema([
-                                Select::make('scan_type_id')
-                                    ->label('Scan Type')
-                                    ->relationship('scanType', 'name')
-                                    ->required()
-                                    ->searchable()
-                                    ->preload(),
-
-                                Select::make('scan_id')
-                                    ->label('Scan')
-                                    ->relationship('scan', 'name')
-                                    ->required()
-                                    ->searchable()
-                                    ->preload(),
-
-                                FileUpload::make('documents')
-                                    ->label('Documents')
-                                    ->multiple()
-                                    ->reorderable()
-                                    ->preserveFilenames()
-                                    ->directory('case-report-documents'),
-                            ])
-                            ->columns(3)
-                            ->createItemButtonLabel('Add Scan'),
+                        Textarea::make('description')->maxLength(255),
+                        Textarea::make('remarks')->maxLength(255),
+                        TextInput::make('case_id')->visibleOn('view')->disabled(),
+                        Forms\Components\Hidden::make('status')->default('pending'),
                     ]),
-            ]);
-    }
+
+                    Repeater::make('items')
+                        ->relationship('items')
+                        ->label('Case Report Items')
+                        ->schema([
+                            Select::make('scan_type_id')->relationship('scanType', 'name')->required()->searchable()->preload(),
+                            Select::make('scan_id')->relationship('scan', 'name')->required()->searchable()->preload(),
+                            Textarea::make('remarks')->maxLength(255),
+                            FileUpload::make('documents')->multiple()->reorderable()->preserveFilenames()->directory('case-report-documents'),
+                        ])
+                        ->columns(3)
+                        ->createItemButtonLabel('Add Scan')
+                        ->saveRelationshipsUsing(function ($state, $record) {
+                            $existingItemIds = $record->items()->pluck('id')->toArray();
+                            $incomingItemIds = [];
+                            $hasDocuments = false;
+
+                            foreach ($state as $itemData) {
+                                if (!empty($itemData['id'])) {
+                                    // Update existing item
+                                    $item = $record->items()->find($itemData['id']);
+                                    if ($item) {
+                                        $item->update($itemData);
+                                        $incomingItemIds[] = $item->id;
+                                    }
+                                } else {
+                                    // Create new item
+                                    $item = $record->items()->create($itemData);
+                                    $incomingItemIds[] = $item->id;
+                                }
+
+                                // Check if this item has documents
+                                if (!empty($itemData['documents']) && is_array($itemData['documents']) && count(array_filter($itemData['documents'])) > 0) {
+                                    $hasDocuments = true;
+                                }
+
+                                Log::info('Case Report Item Synced', [
+                                    'case_report_id' => $record->id,
+                                    'item' => $itemData,
+                                    'user_id' => auth()->id(),
+                                ]);
+                            }
+
+                            // Delete items that were removed in the form
+                            $itemsToDelete = array_diff($existingItemIds, $incomingItemIds);
+                            if (!empty($itemsToDelete)) {
+                                $record->items()->whereIn('id', $itemsToDelete)->delete();
+                            }
+
+                            // Update case report status based on documents presence
+                            $record->status = $hasDocuments ? 'closed' : 'pending';
+                            $record->save();
+
+                            \Log::info('Updating CaseReport status', [
+                                'case_report_id' => $record->id,
+                                'status_to_set' => $record->status,
+                            ]);
+                        }),
+                ]),
+        ]);
+}
+
 
     public static function table(Table $table): Table
     {
@@ -108,10 +129,10 @@ class CaseReportResource extends Resource
                 Tables\Columns\TextColumn::make('doctor.name')->label('Doctor'),
                 Tables\Columns\TextColumn::make('description')->limit(30),
                 Tables\Columns\TextColumn::make('status')->badge()->colors([
-                    'Completed' => 'success',
-                    'Pending' => 'danger',
+                    'closed' => 'success',
+                    'pending' => 'danger',
                 ]),
-                Tables\Columns\TextColumn::make('created_at')->label('Created At')->dateTime(),
+                Tables\Columns\TextColumn::make('created_at')->label('Created At')->date(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('created_at')
@@ -153,6 +174,7 @@ class CaseReportResource extends Resource
                                 ->send();
                         }
                         $livewire->dispatchBrowserEvent('whatsapp-loading-stop');
+                        return null;
                     }),
             ])
             ->bulkActions([

@@ -17,6 +17,7 @@ return new class extends Migration
         $table->foreignId('scan_type_id')->constrained()->onDelete('cascade');
         $table->foreignId('scan_id')->constrained()->onDelete('cascade');
         $table->json('documents')->nullable();
+        $table->string('remarks')->nullable();
         $table->timestamps();
     });
 }

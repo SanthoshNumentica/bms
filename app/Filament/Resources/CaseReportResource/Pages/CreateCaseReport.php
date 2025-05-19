@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Log;
 class CreateCaseReport extends CreateRecord
 {
     protected static string $resource = CaseReportResource::class;
+    protected $casts = [
+    'documents' => 'array',
+];
+
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
@@ -22,31 +26,21 @@ class CreateCaseReport extends CreateRecord
     {
         return 'Case Report  has been created successfully';
     }
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        // Check if any of the items has documents uploaded
-        $hasDocuments = false;
+    
+    protected function afterSave(): void
+{
+    $caseReport = $this->record->load('items');
 
-        if (isset($data['items']) && is_array($data['items'])) {
-            foreach ($data['items'] as $item) {
-                if (!empty($item['documents'] ?? [])) {
-                    $hasDocuments = true;
-                    break;
-                }
-            }
+    foreach ($caseReport->items as $item) {
+        Log::info('Checking item documents:', $item->documents ?? []);
+        
+        if (!empty($item->documents)) {
+            $caseReport->status = 'closed';
+            $caseReport->save();
+            Log::info('Status changed to closed due to documents.');
+            break;
         }
-
-        $data['status'] = $hasDocuments ? 'closed' : 'pending';
-
-        return $data;
     }
-     protected function updateStatusBasedOnDocuments(): void
-    {
-        $record = $this->record->refresh(); // Reload fresh from DB
+}
 
-        $hasDocuments = $record->items()->whereHas('documents')->exists();
-
-        $record->status = $hasDocuments ? 'closed' : 'pending';
-        $record->save();
-    }
 }

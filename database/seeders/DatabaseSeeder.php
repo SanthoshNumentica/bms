@@ -29,7 +29,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             BloodGroupSeeder::class,
             GenderSeeder::class,
-            TitleSeeder::class
+            TitleSeeder::class,
+            ScanSeeder::class
         ]);
 
         $role = Role::create(['name' => 'Admin']);

@@ -13,6 +13,11 @@ class Patient extends Model
     {
         return $this->belongsTo(Title::class, 'title_fk_id');
     }
+    public function caseReports()
+{
+    return $this->hasMany(CaseReport::class, 'patient_fk_id', 'id');
+}
+
     public function gender()
     {
         return $this->belongsTo(Gender::class, 'gender_fk_id');
