@@ -16,12 +16,12 @@ return [
     'path'=>'dashboard',
     'title'=>'Pranav Diagnostics',
     'colors' => [
-    'primary' => 'blue',
-    'secondary' => 'gray',
-    'danger' => 'red',
-    'success' => 'green',
-    'warning' => 'yellow',
-],
+        'primary' => 'primary',   // uses your Tailwind 'primary' color
+        'secondary' => 'secondary',  // uses Tailwind 'secondary' color
+    ],
+
+    // optionally, enable dark mode
+    'dark_mode' => false,
 
     'broadcasting' => [
 
@@ -62,7 +62,7 @@ return [
     | After changing the path, you should run `php artisan filament:assets`.
     |
     */
-
+    'dark_mode' => true, // or false
     'assets_path' => null,
 
     /*

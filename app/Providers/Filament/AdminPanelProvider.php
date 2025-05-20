@@ -20,7 +20,6 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
-
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -39,36 +38,37 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Sky,
             ])
+            // Discover resources and pages on panel, NOT plugin
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->plugin(
+                \Hasnayeen\Themes\ThemesPlugin::make()
+            )
             ->pages([
                 Pages\Dashboard::class,
             ])
-
             ->navigationItems([
                 NavigationItem::make('Users')
-                    // ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.Users'))
-                    ->url(fn(): string => UserResource::getUrl())
+                    ->url(fn (): string => UserResource::getUrl())
                     ->icon('heroicon-o-user-group')
                     ->group('Settings')
                     ->sort(1)
-                    ->visible(fn(): bool => auth()->user()->can('User List')),
+                    ->visible(fn (): bool => auth()->user()->can('User List')),
                 NavigationItem::make('Roles')
-                    ->url(fn(): string => RoleResource::getUrl())
+                    ->url(fn (): string => RoleResource::getUrl())
                     ->icon('heroicon-o-rectangle-stack')
                     ->group('Settings')
-                    ->sort(1)
-                    ->visible(fn(): bool => auth()->user()->can('Role List')),
-                NavigationItem::make('Permissons')
-                    ->url(fn(): string => PermissionResource::getUrl())
+                    ->sort(2)
+                    ->visible(fn (): bool => auth()->user()->can('Role List')),
+                NavigationItem::make('Permissions')
+                    ->url(fn (): string => PermissionResource::getUrl())
                     ->icon('heroicon-o-key')
                     ->group('Settings')
-                    ->sort(1)
-                    ->visible(fn(): bool => auth()->user()->can('Permission List')),
+                    ->sort(3)
+                    ->visible(fn (): bool => auth()->user()->can('Permission List')),
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                // Widgets\AccountWidget::class,
                 \App\Filament\Widgets\StatsOverview::class,
                 \App\Filament\Widgets\MonthlyPatientsChart::class,
                 \App\Filament\Widgets\MonthlyDoctorsChart::class,
@@ -85,11 +85,13 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class,
+            ])
+            ->tenantMiddleware([
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
-
-
             ]);
     }
 }
