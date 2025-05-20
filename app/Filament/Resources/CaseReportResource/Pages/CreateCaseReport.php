@@ -24,7 +24,7 @@ class CreateCaseReport extends CreateRecord
 
     protected function getCreatedNotificationTitle(): ?string
     {
-        return 'Case Report  has been created successfully';
+        return 'Scan Report  has been created successfully';
     }
     
     protected function afterSave(): void

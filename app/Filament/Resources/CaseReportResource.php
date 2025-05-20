@@ -60,7 +60,7 @@ class CaseReportResource extends Resource
 
                     Repeater::make('items')
                         ->relationship('items')
-                        ->label('Case Report Items')
+                        ->label('Scan Reports')
                         ->schema([
                             Select::make('scan_type_id')->relationship('scanType', 'name')->required()->searchable()->preload(),
                             Select::make('scan_id')->relationship('scan', 'name')->required()->searchable()->preload(),
@@ -93,7 +93,7 @@ class CaseReportResource extends Resource
                                     $hasDocuments = true;
                                 }
 
-                                Log::info('Case Report Item Synced', [
+                                Log::info('Scan Report Item Synced', [
                                     'case_report_id' => $record->id,
                                     'item' => $itemData,
                                     'user_id' => auth()->id(),
@@ -110,7 +110,7 @@ class CaseReportResource extends Resource
                             $record->status = $hasDocuments ? 'closed' : 'pending';
                             $record->save();
 
-                            \Log::info('Updating CaseReport status', [
+                            \Log::info('Updating Scan Report status', [
                                 'case_report_id' => $record->id,
                                 'status_to_set' => $record->status,
                             ]);
@@ -125,7 +125,7 @@ class CaseReportResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('Id'),
-                Tables\Columns\TextColumn::make('case_id')->label('Case ID'),
+                Tables\Columns\TextColumn::make('case_id')->label('Scan Report ID'),
                 Tables\Columns\TextColumn::make('patient.name')->label('Patient'),
                 Tables\Columns\TextColumn::make('patient.mobile_no')->label('Mobile No'),
                 Tables\Columns\TextColumn::make('doctor.name')->label('Doctor'),
