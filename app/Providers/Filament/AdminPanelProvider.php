@@ -45,32 +45,35 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
 
-             ->navigationItems([
-                        NavigationItem::make('Users')
-                        // ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.Users'))
-                        ->url(fn (): string => UserResource::getUrl())
-                        ->icon('heroicon-o-user-group')
-                        ->group('Settings')
-                        ->sort(1)
-                        ->visible(fn(): bool => auth()->user()->can('User List')),
-                        NavigationItem::make('Roles')
-                        ->url(fn (): string => RoleResource::getUrl())
-                        ->icon('heroicon-o-rectangle-stack')
-                        ->group('Settings')
-                        ->sort(1)
-                        ->visible(fn(): bool => auth()->user()->can('Role List')),
-                        NavigationItem::make('Permissons')
-                        ->url(fn (): string => PermissionResource::getUrl())
-                        ->icon('heroicon-o-key')
-                        ->group('Settings')
-                        ->sort(1)
-                        ->visible(fn(): bool => auth()->user()->can('Permission List')),
-             ])
+            ->navigationItems([
+                NavigationItem::make('Users')
+                    // ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.Users'))
+                    ->url(fn(): string => UserResource::getUrl())
+                    ->icon('heroicon-o-user-group')
+                    ->group('Settings')
+                    ->sort(1)
+                    ->visible(fn(): bool => auth()->user()->can('User List')),
+                NavigationItem::make('Roles')
+                    ->url(fn(): string => RoleResource::getUrl())
+                    ->icon('heroicon-o-rectangle-stack')
+                    ->group('Settings')
+                    ->sort(1)
+                    ->visible(fn(): bool => auth()->user()->can('Role List')),
+                NavigationItem::make('Permissons')
+                    ->url(fn(): string => PermissionResource::getUrl())
+                    ->icon('heroicon-o-key')
+                    ->group('Settings')
+                    ->sort(1)
+                    ->visible(fn(): bool => auth()->user()->can('Permission List')),
+            ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 // Widgets\AccountWidget::class,
                 \App\Filament\Widgets\StatsOverview::class,
-                // \App\Filament\Resources\Resource\Widgets\StatsOverviewDoctor::class,
+                \App\Filament\Widgets\MonthlyPatientsChart::class,
+                \App\Filament\Widgets\MonthlyDoctorsChart::class,
+                \App\Filament\Widgets\MonthlyCaseReportsChart::class,
+                \App\Filament\Widgets\MonthlyWhatsapplogChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,

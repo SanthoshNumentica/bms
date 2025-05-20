@@ -18,7 +18,7 @@ class StatsOverview extends StatsOverviewWidget
 
         return [
             Card::make('Total Patients', Patient::count()),
-            Card::make('Total Referred Doctors', Doctor::count()),
+            Card::make('Total Doctors', Doctor::count()),
             Card::make('Total Case Reports', CaseReport::count()),
             Card::make('Total WhatsApp Sent', WhatsappLog::count()),
         ];
