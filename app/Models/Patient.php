@@ -14,9 +14,9 @@ class Patient extends Model
         return $this->belongsTo(Title::class, 'title_fk_id');
     }
     public function caseReports()
-{
-    return $this->hasMany(CaseReport::class, 'patient_fk_id', 'id');
-}
+    {
+        return $this->hasMany(CaseReport::class, 'patient_fk_id', 'id');
+    }
 
     public function gender()
     {
@@ -29,13 +29,8 @@ class Patient extends Model
     protected static function booted()
     {
         static::creating(function ($model) {
-            // Get the last patient_id from the database
             $lastPatient = static::orderBy('patient_id', 'desc')->first();
-
-            // Extract the numeric part and increment it by 1
             $lastNumber = (int) str_replace('PAT', '', $lastPatient->patient_id ?? 'PAT0000');
-
-            // Generate the new patient_id with padding
             $model->patient_id = 'PAT' . str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
         });
     }

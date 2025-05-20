@@ -28,7 +28,10 @@ class RoleResource extends Resource
 
     // Navication Order
     protected static ?int $navigationSort = 2;
-
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
     protected static ?string $navigationGroup = 'Settings';
 
 
@@ -40,13 +43,13 @@ class RoleResource extends Resource
 
                 // Card Design
                 Section::make()->schema([
-                TextInput::make('name')
-                ->minLength(2)
-                ->maxLength(255)
-                ->required()
-                ->unique(ignoreRecord: true),
-                CheckboxList::make('permissions')
-                 ->relationship('permissions', 'name')
+                    TextInput::make('name')
+                        ->minLength(2)
+                        ->maxLength(255)
+                        ->required()
+                        ->unique(ignoreRecord: true),
+                    CheckboxList::make('permissions')
+                        ->relationship('permissions', 'name')
                 ])->columns(3)
             ]);
     }
@@ -60,7 +63,7 @@ class RoleResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')->sortable()
                     ->dateTime('d-m-Y')
                     ->sortable(),
-                    // ->toggleable(isToggledHiddenByDefault: true),
+                // ->toggleable(isToggledHiddenByDefault: true),
                 // Tables\Columns\TextColumn::make('updated_at')
                 //     ->dateTime()
                 //     ->sortable()
@@ -72,11 +75,11 @@ class RoleResource extends Resource
             ->actions([
 
                 Tables\Actions\ViewAction::make()
-                ->visible(auth()->user()->can('Role Read')),
+                    ->visible(auth()->user()->can('Role Read')),
                 Tables\Actions\EditAction::make()
-                ->visible(auth()->user()->can('Role Edit')),
+                    ->visible(auth()->user()->can('Role Edit')),
                 Tables\Actions\DeleteAction::make()
-                ->visible(auth()->user()->can('Role Delete')),
+                    ->visible(auth()->user()->can('Role Delete')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -111,12 +114,9 @@ class RoleResource extends Resource
     // }
     public static function canCreate(): bool
     {
-        if(!auth()->user()->can('Role Create'))
-        {
+        if (!auth()->user()->can('Role Create')) {
             return false;
-        }
-        else
-        {
+        } else {
             return TRUE;
         }
 

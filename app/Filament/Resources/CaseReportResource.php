@@ -21,6 +21,7 @@ use Filament\Livewire\Notifications;
 use Illuminate\Support\Facades\Http;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
+use PhpParser\Node\Stmt\Label;
 
 class CaseReportResource extends Resource
 {
@@ -64,7 +65,7 @@ class CaseReportResource extends Resource
                             Select::make('scan_type_id')->relationship('scanType', 'name')->required()->searchable()->preload(),
                             Select::make('scan_id')->relationship('scan', 'name')->required()->searchable()->preload(),
                             Textarea::make('remarks')->maxLength(255),
-                            FileUpload::make('documents')->multiple()->reorderable()->preserveFilenames()->directory('case-report-documents'),
+                            FileUpload::make('documents')->multiple()->reorderable()->Label('Reports')->preserveFilenames()->directory('case-report-documents'),
                         ])
                         ->columns(3)
                         ->createItemButtonLabel('Add Scan')
@@ -126,6 +127,7 @@ class CaseReportResource extends Resource
                 Tables\Columns\TextColumn::make('id')->label('Id'),
                 Tables\Columns\TextColumn::make('case_id')->label('Case ID'),
                 Tables\Columns\TextColumn::make('patient.name')->label('Patient'),
+                Tables\Columns\TextColumn::make('patient.mobile_no')->label('Mobile No'),
                 Tables\Columns\TextColumn::make('doctor.name')->label('Doctor'),
                 Tables\Columns\TextColumn::make('description')->limit(30),
                 Tables\Columns\TextColumn::make('status')->badge()->colors([

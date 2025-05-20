@@ -33,6 +33,10 @@ class GenderResource extends Resource
     {
         return 'Gender'; // Shown on tab, breadcrumb, etc.
     }
+    public static function shouldRegisterNavigation(): bool
+{
+    return false;
+}
 
     public static function getPluralModelLabel(): string
     {

@@ -26,6 +26,10 @@ class PermissionResource extends Resource
     protected static ?string $model = Permission::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-key';
+     public static function shouldRegisterNavigation(): bool
+{
+    return false;
+}
     // Navication Order
     protected static ?int $navigationSort = 3;
 

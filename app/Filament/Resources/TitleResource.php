@@ -24,7 +24,10 @@ class TitleResource extends Resource
     {
         return 'Title'; // Shown on tab, breadcrumb, etc.
     }
-
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
     public static function getPluralModelLabel(): string
     {
         return 'Title'; // Shown in list view tab title
@@ -35,9 +38,9 @@ class TitleResource extends Resource
         return $form
             ->schema([
                 Section::make()->schema([
-                Forms\Components\TextInput::make('title_name')
-                    ->required()
-                    ->maxLength(255),
+                    Forms\Components\TextInput::make('title_name')
+                        ->required()
+                        ->maxLength(255),
                 ])
             ]);
     }
@@ -52,7 +55,7 @@ class TitleResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')->label("Created On")->searchable()
                     ->searchable(),
-                 Tables\Columns\TextColumn::make('updated_at')->label("Updated On")->searchable()
+                Tables\Columns\TextColumn::make('updated_at')->label("Updated On")->searchable()
                     ->searchable(),
             ])
             ->filters([
