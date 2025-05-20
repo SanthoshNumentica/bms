@@ -130,10 +130,16 @@ class CaseReportResource extends Resource
                 Tables\Columns\TextColumn::make('patient.mobile_no')->label('Mobile No'),
                 Tables\Columns\TextColumn::make('doctor.name')->label('Doctor'),
                 Tables\Columns\TextColumn::make('description')->limit(30),
-                Tables\Columns\TextColumn::make('status')->badge()->colors([
-                    'closed' => 'success',
-                    'pending' => 'danger',
-                ]),
+                Tables\Columns\TextColumn::make('status')
+    ->label('Status')
+    ->badge()
+    ->color(fn ($state) => match ($state) {
+        'closed' => 'success',   // Green
+        'pending' => 'danger',   // Red
+        default => 'secondary', // Default gray
+    })
+    ->formatStateUsing(fn ($state) => $state === 'closed' ? 'Completed' : ucfirst($state)),
+
                 Tables\Columns\TextColumn::make('created_at')->label('Created At')->date(),
             ])
             ->filters([
