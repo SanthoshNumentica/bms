@@ -21,4 +21,8 @@ class CreateDoctors extends CreateRecord
     {
         return 'Doctor has been created successfully';
     }
+     public static function canCreateAnother(): bool
+    {
+        return false;
+    }
 }

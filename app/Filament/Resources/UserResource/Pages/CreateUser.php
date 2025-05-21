@@ -22,5 +22,9 @@ class CreateUser extends CreateRecord
     {
         return 'User has been created successfully';
     }
+     public static function canCreateAnother(): bool
+    {
+        return false;
+    }
 
 }

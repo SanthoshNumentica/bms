@@ -22,12 +22,12 @@ class DoctorsResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
     public static function getModelLabel(): string
     {
-        return 'Doctor'; // Shown on tab, breadcrumb, etc.
+        return 'Doctor';
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'Doctor'; // Shown in list view tab title
+        return 'Doctor';
     }
     public static function form(Form $form): Form
     {
