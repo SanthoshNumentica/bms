@@ -1,6 +1,6 @@
 FROM php:8.3-fpm
 
-# Install system dependencies and PHP extensions (including intl)
+# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpng-dev \
@@ -38,16 +38,23 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Set permissions
+# Set file permissions
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Cache config
-RUN php artisan config:cache \
- && php artisan route:cache
+# Link storage folder
+RUN php artisan storage:link
 
-# Expose Laravel development port
+# Publish Filament assets (for styles and scripts to load properly)
+RUN php artisan filament:assets
+
+# Cache config and routes
+RUN php artisan config:cache \
+ && php artisan route:cache \
+ && php artisan view:cache
+
+# Expose port for Laravel dev server
 EXPOSE 8000
 
-# Run Laravel built-in server
+# Run Laravel's built-in server
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
