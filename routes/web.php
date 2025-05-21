@@ -14,13 +14,8 @@ use Illuminate\Support\Facades\Redirect;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', function () {
-    return view('welcome');
-});
 
-
-Route::get('/admin', fn () => 'Admin Panel Placeholder');
-
+Route::get('/', fn () => Redirect::to('/admin'));
 
 
 Route::post('/send-whatsapp/{id}', [WhatsAppController::class, 'findCaseReportById'])->name('send.whatsapp');
