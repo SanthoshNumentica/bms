@@ -20,4 +20,8 @@ class CreatePatient extends CreateRecord
     {
         return 'Patient has been created successfully';
     }
+     public static function canCreateAnother(): bool
+    {
+        return false;
+    }
 }

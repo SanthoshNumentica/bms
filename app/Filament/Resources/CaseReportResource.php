@@ -36,21 +36,195 @@ class CaseReportResource extends Resource
             Section::make()
                 ->schema([
                     Grid::make(4)->schema([
-                        Forms\Components\Select::make('patient_fk_id')
-                            ->label('Patient')
-                            ->relationship('patient', 'name')
-                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name}-{$record->patient_id} ({$record->mobile_no})")
-                            ->required()
-                            ->searchable()
-                            ->preload(),
+    Forms\Components\Select::make('patient_fk_id')
+        ->label('Patient')
+        ->relationship('patient', 'name')
+        ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name}-{$record->patient_id}")
+        ->required()
+        ->searchable()
+        ->preload()
+        ->createOptionForm([
+            Grid::make(4)->schema([
+                Forms\Components\Select::make('title_fk_id')
+                    ->label('Title')
+                    ->placeholder('Select a title')
+                    ->relationship('title', 'title_name')
+                    ->required()
+                    ->searchable()
+                    ->preload(),
+
+                Forms\Components\TextInput::make('name')
+                    ->label('Name')
+                    ->required(),
+
+                Forms\Components\TextInput::make('father_name')
+                    ->label('Father Name')
+                    ->required()
+                    ->maxLength(255),
+
+                Forms\Components\TextInput::make('email_id')
+                    ->label('Email')
+                    ->required()
+                    ->email(),
+            ]),
+
+            Grid::make(4)->schema([
+                Forms\Components\DatePicker::make('dob')
+                    ->label('Date Of Birth')
+                    ->required(),
+
+               Forms\Components\TextInput::make('mobile_no')
+                    ->label('Phone Number')
+                    ->required()
+                    ->maxLength(10)
+                    ->inputMode('numeric'),
+
+                Forms\Components\TextInput::make('whatsapp_no')
+                        ->label('Whatsapp Number')
+                        ->maxLength(10)
+                        ->inputMode('numeric'),
+
+
+                Forms\Components\Select::make('gender_fk_id')
+                    ->label('Gender')
+                    ->placeholder('Select Gender')
+                    ->relationship('gender', 'gender_name')
+                    ->required()
+                    ->searchable()
+                    ->preload(),
+            ]),
+
+            Grid::make(4)->schema([
+                Forms\Components\Select::make('blood_group_fk_id')
+                    ->label('Blood Group')
+                    ->placeholder('Select Blood Group')
+                    ->relationship('blood_group', 'name')
+                    ->required()
+                    ->searchable()
+                    ->preload(),
+
+                Forms\Components\TextInput::make('address')
+                    ->label('Address')
+                    ->required()
+                    ->maxLength(255),
+
+                Forms\Components\TextInput::make('street')
+                    ->label('Street')
+                    ->required()
+                    ->maxLength(255),
+
+                Forms\Components\TextInput::make('pincode')
+                    ->label('Pin Code')
+                    ->required()
+                    ->maxLength(255),
+            ]),
+
+            Grid::make(4)->schema([
+                Forms\Components\TextInput::make('city')
+                    ->label('City')
+                    ->required()
+                    ->maxLength(255),
+
+                Forms\Components\TextInput::make('remarks')
+                    ->label('Remarks')
+                    ->maxLength(255),
+
+                Forms\Components\TextInput::make('patient_id')
+                    ->label('Patient ID')
+                    ->visibleOn('view')
+                    ->disabled(),
+            ]),
+        ]),
 
                         Forms\Components\Select::make('doc_ref_fk_id')
                             ->label('Referred Doctor')
                             ->relationship('doctor', 'name')
-                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name}-{$record->doctor_id} ({$record->mobile_no})")
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name}-{$record->doctor_id}")
                             ->required()
                             ->searchable()
-                            ->preload(),
+                            ->preload()
+                            ->createOptionForm([
+            Grid::make(4)->schema([
+                Forms\Components\Select::make('title_fk_id')
+                    ->label('Title')
+                    ->placeholder('Select a title')
+                    ->relationship('title', 'title_name')
+                    ->required()
+                    ->searchable()
+                    ->preload(),
+
+                Forms\Components\TextInput::make('name')
+                    ->label('Full Name')
+                    ->required(),
+
+                Forms\Components\Select::make('gender_fk_id')
+                    ->label('Gender')
+                    ->placeholder('Select Gender')
+                    ->relationship('gender', 'gender_name')
+                    ->required()
+                    ->searchable()
+                    ->preload(),
+
+               Forms\Components\Select::make('blood_group_fk_id')
+                    ->label('Blood Group')
+                    ->placeholder('Select Blood Group')
+                    ->relationship('blood_group', 'name')
+                    ->required()
+                    ->searchable()
+                    ->preload(),
+            ]),
+
+            Grid::make(4)->schema([
+                Forms\Components\DatePicker::make('dob')
+                    ->label('Date Of Birth')
+                    ->required(),
+
+               Forms\Components\TextInput::make('mobile_no')
+                    ->label('Phone Number')
+                    ->required()
+                    ->maxLength(10)
+                    ->inputMode('numeric'),
+
+                Forms\Components\TextInput::make('email_id')
+                        ->label('Email')
+                        ->maxLength(100), 
+                Forms\Components\TextInput::make('address')
+                    ->label('Address')
+                    ->required()
+                    ->maxLength(255),              
+            ]),
+
+            Grid::make(4)->schema([
+                
+
+                
+
+                Forms\Components\TextInput::make('street')
+                    ->label('Street')
+                    ->required()
+                    ->maxLength(255),
+
+                Forms\Components\TextInput::make('pincode')
+                    ->label('Pin Code')
+                    ->required()
+                    ->maxLength(255),
+                    Forms\Components\TextInput::make('city')
+                    ->label('City')
+                    ->required()
+                    ->maxLength(255),
+
+              
+            ]),
+
+            Grid::make(4)->schema([
+                
+
+                Forms\Components\TextInput::make('doctor_id')
+                    ->label('Doctor ID')
+                    ->visibleOn('view')
+                    ->disabled(),
+            ]),
+        ]),
 
                         Textarea::make('description')->maxLength(255),
                         Textarea::make('remarks')->maxLength(255),
@@ -156,7 +330,7 @@ class CaseReportResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->icon('heroicon-o-eye'),
-                Tables\Actions\EditAction::make()->icon('heroicon-o-pencil'),
+                Tables\Actions\EditAction::make()->icon('heroicon-o-pencil')->label('Upload Documents'),
                 Tables\Actions\DeleteAction::make()->icon('heroicon-o-trash'),
                 Tables\Actions\Action::make('sendWhatsapp')
                     ->label('WhatsApp')

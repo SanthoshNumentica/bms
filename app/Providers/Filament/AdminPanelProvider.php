@@ -23,6 +23,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
@@ -48,25 +49,27 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->navigationItems([
-                NavigationItem::make('Users')
-                    ->url(fn (): string => UserResource::getUrl())
-                    ->icon('heroicon-o-user-group')
-                    ->group('Settings')
-                    ->sort(1)
-                    ->visible(fn (): bool => auth()->user()->can('User List')),
-                NavigationItem::make('Roles')
-                    ->url(fn (): string => RoleResource::getUrl())
-                    ->icon('heroicon-o-rectangle-stack')
-                    ->group('Settings')
-                    ->sort(2)
-                    ->visible(fn (): bool => auth()->user()->can('Role List')),
-                NavigationItem::make('Permissions')
-                    ->url(fn (): string => PermissionResource::getUrl())
-                    ->icon('heroicon-o-key')
-                    ->group('Settings')
-                    ->sort(3)
-                    ->visible(fn (): bool => auth()->user()->can('Permission List')),
-            ])
+    NavigationItem::make('Users')
+        ->url(fn (): string => UserResource::getUrl())
+        ->icon('heroicon-o-users') // group of people icon, good for Users
+        ->group('Settings')
+        ->sort(1)
+        ->visible(fn (): bool => auth()->user()->can('User List')),
+
+    NavigationItem::make('Roles')
+        ->url(fn (): string => RoleResource::getUrl())
+        ->icon('heroicon-o-shield-check') // shield with check for roles (security/authorization)
+        ->group('Settings')
+        ->sort(2)
+        ->visible(fn (): bool => auth()->user()->can('Role List')),
+
+    NavigationItem::make('Permissions')
+        ->url(fn (): string => PermissionResource::getUrl())
+        ->icon('heroicon-o-lock-closed') // lock icon for permissions (access control)
+        ->group('Settings')
+        ->sort(3)
+        ->visible(fn (): bool => auth()->user()->can('Permission List')),
+])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 \App\Filament\Widgets\StatsOverview::class,
@@ -93,5 +96,12 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+    public function boot(): void
+    {
+        FilamentIcon::register([
+            'panels::topbar.global-search.field' => 'fas-magnifying-glass',
+            'panels::sidebar.group.collapse-button' => view('icons.chevron-up'),
+        ]);
     }
 }
