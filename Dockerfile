@@ -1,7 +1,7 @@
-# Use official PHP 8.1 image with FPM
+# Use official PHP 8.1 FPM image
 FROM php:8.1-fpm
 
-# Install system dependencies and PHP extensions needed for Laravel & Filament
+# Install system dependencies and PHP extensions required by Laravel & Filament
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -21,21 +21,24 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy existing application files
+# Copy application files
 COPY . .
 
-# Install PHP dependencies
+# Increase PHP memory limit for Composer
+ENV COMPOSER_MEMORY_LIMIT=-1
+
+# Install PHP dependencies via Composer
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Cache Laravel config & routes for performance
+# Cache config and routes for better performance
 RUN php artisan config:cache
 RUN php artisan route:cache
 
-# Set permissions (if needed)
+# Set permissions for storage and cache directories
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port 9000 for php-fpm
+# Expose port 9000 (php-fpm default)
 EXPOSE 9000
 
-# Start php-fpm server
+# Start PHP-FPM server
 CMD ["php-fpm"]
