@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\Redirect;
 |
 */
 
-Route::get('/', fn () => Redirect::to('/admin'));
+Route::get('/admin', fn () => 'Admin Panel Placeholder');
+
 
 
 Route::post('/send-whatsapp/{id}', [WhatsAppController::class, 'findCaseReportById'])->name('send.whatsapp');
