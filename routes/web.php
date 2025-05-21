@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WhatsAppController;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\File;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,14 @@ use Illuminate\Support\Facades\Redirect;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('/debug-assets', function () {
+    return response()->json([
+        'public_build_files' => File::allFiles(public_path('build')),
+        'public_css_filament' => File::allFiles(public_path('css/filament')),
+    ]);
+});
+
 
 Route::get('/', fn () => Redirect::to('/admin'));
 
