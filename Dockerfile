@@ -46,5 +46,8 @@ RUN chown -R www-data:www-data /var/www \
 RUN php artisan config:cache \
  && php artisan route:cache
 
-EXPOSE 9000
-CMD ["php-fpm"]
+# Expose Laravel development port
+EXPOSE 8000
+
+# Run Laravel built-in server
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
