@@ -6,7 +6,7 @@ use App\Filament\Resources\ScanTypeResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListScanTypes extends ListRecords
+class ListScanType extends ListRecords
 {
     protected static string $resource = ScanTypeResource::class;
 

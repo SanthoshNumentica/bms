@@ -100,7 +100,7 @@ class ScanTypeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListScanTypes::route('/'),
+            'index' => Pages\ListScanType::route('/'),
             'create' => Pages\CreateScanType::route('/create'),
             'edit' => Pages\EditScanType::route('/{record}/edit'),
             'view' => Pages\ViewScanType::route('/{record}'),
