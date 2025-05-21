@@ -11,10 +11,7 @@ WORKDIR /var/www/html
 
 COPY . .
 
-ENV COMPOSER_MEMORY_LIMIT=-1
-
-RUN composer clear-cache
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader -vvv
+RUN php -d memory_limit=-1 /usr/bin/composer install --no-interaction --prefer-dist --optimize-autoloader -vvv || tail -n 50 /root/.composer/composer.log
 
 RUN php artisan config:cache
 RUN php artisan route:cache
