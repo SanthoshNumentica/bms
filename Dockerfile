@@ -47,7 +47,7 @@ RUN php artisan config:cache \
  && php artisan route:cache
 
 # Expose Laravel development port
-EXPOSE 8000
+EXPOSE 10000
 
 # Run Laravel built-in server
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
