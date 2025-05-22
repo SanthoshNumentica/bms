@@ -51,7 +51,8 @@ RUN php artisan filament:assets
 # Cache config and routes
 RUN php artisan config:cache \
  && php artisan route:cache \
- && php artisan view:cache
+ && php artisan view:cache \
+ && php artisan migrate
 
 # Expose port for Laravel dev server
 EXPOSE 8000
