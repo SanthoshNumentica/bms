@@ -22,6 +22,11 @@ class Patient extends Model
     {
         return $this->belongsTo(Gender::class, 'gender_fk_id');
     }
+
+    public function doctor()
+{
+    return $this->belongsTo(Doctor::class, 'doctor_fk_id');
+}
     public function blood_group()
     {
         return $this->belongsTo(BloodGroup::class, 'blood_group_fk_id');
