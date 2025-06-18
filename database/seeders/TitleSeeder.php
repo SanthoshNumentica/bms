@@ -12,7 +12,7 @@ class TitleSeeder extends Seeder
      */
     public function run(): void
     {
-        $titles = ['Mr.', 'Mrs.', 'Miss', 'Dr.', 'Prof.'];
+        $titles = ['Mr', 'Mrs', 'Miss', 'Dr', 'Prof'];
 
         foreach ($titles as $title) {
             DB::table('titles')->insert([
