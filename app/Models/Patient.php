@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Patient extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $guarded = [];
     public function title()
     {
@@ -24,9 +24,9 @@ class Patient extends Model
     }
 
     public function doctor()
-{
-    return $this->belongsTo(Doctor::class, 'doctor_fk_id');
-}
+    {
+        return $this->belongsTo(Doctor::class, 'doctor_fk_id');
+    }
     public function blood_group()
     {
         return $this->belongsTo(BloodGroup::class, 'blood_group_fk_id');
