@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger("title_fk_id");
             $table->string("name");
             $table->unsignedBigInteger("gender_fk_id");
-            $table->unsignedBigInteger("blood_group_fk_id");
+            $table->unsignedBigInteger("blood_group_fk_id")->nullable();
             $table->string("mobile_no");
             $table->string("email_id")->unique();
             $table->date("dob")->nullable();

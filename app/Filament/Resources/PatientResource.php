@@ -59,9 +59,7 @@ class PatientResource extends Resource
                                 ->email(),
                         ]),
                         Grid::make(4)->schema([
-                            Forms\Components\DatePicker::make('dob')
-                                ->label('Date Of Birth')
-                                ->required(),
+                            
                             Forms\Components\TextInput::make('mobile_no')
                                 ->label('Phone Number')
                                 ->required()
@@ -76,20 +74,15 @@ class PatientResource extends Resource
                                 ->required()
                                 ->searchable()
                                 ->preload(),
-                        ]),
-                        Grid::make(4)->schema([
-
-                            Forms\Components\select::make('blood_group_fk_id')
-                                ->label('Blood Group')
-                                ->placeholder('Select Blood Group')
-                                ->relationship('blood_group', 'name')
-                                ->required()
-                                ->searchable()
-                                ->preload(),
                             Forms\Components\TextInput::make('address')
                                 ->label('Address')
                                 ->required()
                                 ->maxLength(255),
+                        ]),
+                        Grid::make(4)->schema([
+
+                            
+                            
                             Forms\Components\TextInput::make('street')
                                 ->label('Street')
                                 ->required()
@@ -98,13 +91,17 @@ class PatientResource extends Resource
                                 ->label('Pin Cdde')
                                 ->required()
                                 ->maxLength(255),
-                        ]),
-                        Grid::make(4)->schema([
-
-                            Forms\Components\TextInput::make('city')
+                             Forms\Components\TextInput::make('city')
                                 ->label('City')
                                 ->required()
                                 ->maxLength(255),
+                            Forms\Components\TextInput::make('remarks')
+                                ->label('Remarks')
+                                ->maxLength(255),
+                        ]),
+                        Grid::make(4)->schema([
+
+                           
                             Forms\Components\TextInput::make('remarks')
                                 ->label('Remarks')
                                 ->maxLength(255),

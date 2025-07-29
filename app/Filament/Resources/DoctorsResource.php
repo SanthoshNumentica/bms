@@ -54,22 +54,14 @@ class DoctorsResource extends Resource
                                 ->required()
                                 ->searchable()
                                 ->preload(),
-                            Forms\Components\select::make('blood_group_fk_id')
-                                ->label('Blood Group')
-                                ->placeholder('Select Blood Group')
-                                ->relationship('blood_group', 'name')
-                                ->required()
-                                ->searchable()
-                                ->preload(),
-                        ]),
-                        Grid::make(4)->schema([
-                            Forms\Components\DatePicker::make('dob')
-                                ->label('Date Of Birth')
-                                ->required(),
                             Forms\Components\TextInput::make('email_id')
                                 ->label('Email')
                                 ->required()
                                 ->email(),
+                           
+                        ]),
+                        Grid::make(4)->schema([
+                            
                             Forms\Components\TextInput::make('mobile_no')
                                 ->label('Phone Number')
                                 ->required()
@@ -78,17 +70,18 @@ class DoctorsResource extends Resource
                                 ->label('Address')
                                 ->required()
                                 ->maxLength(255),
-                        ]),
-                        Grid::make(4)->schema([
-
                             Forms\Components\TextInput::make('street')
                                 ->label('Street')
                                 ->required()
                                 ->maxLength(255),
                             Forms\Components\TextInput::make('pincode')
-                                ->label('Pin Cdde')
+                                ->label('Pin Code')
                                 ->required()
                                 ->maxLength(255),
+                        ]),
+                        Grid::make(4)->schema([
+
+                            
                             Forms\Components\TextInput::make('city')
                                 ->label('City')
                                 ->required()
