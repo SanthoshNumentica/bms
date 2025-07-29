@@ -114,53 +114,78 @@ class PatientResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('id')->searchable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('name')->label("Name")->formatStateUsing(fn($state, $record) => optional($record->title)->title_name . '. ' . $record->name)->searchable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('patient_id')->label("Patient ID")->searchable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('mobile_no')->label("Mobile No")->searchable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('email_id')->label("Email ID")->searchable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('gender.gender_name')->label("Gender")->searchable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('dob')->label("DOB")->date('d-m-Y')->searchable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('address')->label("Address")->formatStateUsing(fn($state, $record) => $record->address . ', ' . $record->city)->searchable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('updated_at')->label("Updated On")->searchable()
-                    ->searchable(),
-            ])
-            ->filters([
-                Tables\Filters\Filter::make('created_at')
-                    ->form([
-                        Forms\Components\DatePicker::make('from'),
-                        Forms\Components\DatePicker::make('until'),
-                    ])
-                    ->query(function ($query, array $data) {
-                        return $query
-                            ->when($data['from'], fn($q) => $q->whereDate('dob', '>=', $data['from']))
-                            ->when($data['until'], fn($q) => $q->whereDate('dob', '<=', $data['until']));
-                    }),
+   public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            Tables\Columns\TextColumn::make('id')
+                ->label('ID')
+                ->searchable(),
 
-            ])
-            ->actions([
-                Tables\Actions\ViewAction::make()->icon('heroicon-o-eye'),
-                Tables\Actions\EditAction::make()->icon('heroicon-o-pencil'),
-                Tables\Actions\DeleteAction::make()->icon('heroicon-o-trash'),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+            Tables\Columns\TextColumn::make('name')
+                ->label("Name")
+                ->formatStateUsing(function ($state, $record) {
+                    $title = optional($record->title)->title_name;
+                    $name = $record->name ?? '';
+                    return trim("{$title}. {$name}");
+                })
+                ->searchable(),
+
+            Tables\Columns\TextColumn::make('patient_id')
+                ->label("Patient ID")
+                ->searchable(),
+
+            Tables\Columns\TextColumn::make('mobile_no')
+                ->label("Mobile No")
+                ->searchable(),
+
+            Tables\Columns\TextColumn::make('email_id')
+                ->label("Email ID")
+                ->searchable(),
+
+            Tables\Columns\TextColumn::make('gender.gender_name')
+                ->label("Gender")
+                ->getStateUsing(fn($record) => $record->gender?->gender_name ?? '')
+                ->searchable(),
+
+            Tables\Columns\TextColumn::make('dob')
+                ->label("DOB")
+                ->date('d-m-Y')
+                ->searchable(),
+
+            Tables\Columns\TextColumn::make('address')
+                ->label("Address")
+                ->formatStateUsing(fn($state, $record) => trim("{$record->address}, {$record->city}"))
+                ->searchable(),
+
+            Tables\Columns\TextColumn::make('updated_at')
+                ->label("Updated On")
+                ->dateTime('d-m-Y H:i')
+                ->searchable(),
+        ])
+        ->filters([
+            Tables\Filters\Filter::make('created_at')
+                ->form([
+                    Forms\Components\DatePicker::make('from'),
+                    Forms\Components\DatePicker::make('until'),
+                ])
+                ->query(function ($query, array $data) {
+                    return $query
+                        ->when($data['from'], fn($q) => $q->whereDate('dob', '>=', $data['from']))
+                        ->when($data['until'], fn($q) => $q->whereDate('dob', '<=', $data['until']));
+                }),
+        ])
+        ->actions([
+            Tables\Actions\ViewAction::make()->icon('heroicon-o-eye'),
+            Tables\Actions\EditAction::make()->icon('heroicon-o-pencil'),
+            Tables\Actions\DeleteAction::make()->icon('heroicon-o-trash'),
+        ])
+        ->bulkActions([
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]),
+        ]);
+}
 
     public static function getRelations(): array
     {
@@ -169,12 +194,13 @@ class PatientResource extends Resource
         ];
     }
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListPatients::route('/'),
-            'create' => Pages\CreatePatient::route('/create'),
-            'edit' => Pages\EditPatient::route('/{record}/edit'),
-        ];
-    }
+   public static function getPages(): array
+{
+    return [
+        'index' => Pages\ListPatients::route('/'),
+        'create' => Pages\CreatePatient::route('/create'),
+        'edit' => Pages\EditPatient::route('/{record}/edit'),
+        'view' => Pages\ViewPatient::route('/{record}'), // 👈 ADD THIS
+    ];
+}
 }

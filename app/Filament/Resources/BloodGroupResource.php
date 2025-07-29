@@ -20,11 +20,14 @@ class BloodGroupResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Master';
-    public static function getModelLabel(): string
+   public static function getModelLabel(): string
     {
         return 'Blood Group'; // Shown on tab, breadcrumb, etc.
     }
-
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
     public static function getPluralModelLabel(): string
     {
         return 'Blood Group'; // Shown in list view tab title
